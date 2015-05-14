@@ -1,13 +1,13 @@
 /* Script for -n: mix text and data on same page */
 OUTPUT_FORMAT("elf32-avr","elf32-avr","elf32-avr")
-OUTPUT_ARCH(avr:90)
+OUTPUT_ARCH(avr:100)
 MEMORY
 {
   text   (rx)   : ORIGIN = 0x0, LENGTH = 4K
   data   (rw!x) : ORIGIN = 0x0800040, LENGTH = 0x100
   /* Provide offsets for config, lock and signature to match
      production file format. Ignore offsets in datasheet.  */
-  config(rw!x)     : ORIGIN = 0x820000, LENGTH = 2
+  config    (rw!x) : ORIGIN = 0x820000, LENGTH = 2
   lock      (rw!x) : ORIGIN = 0x830000, LENGTH = 2
   signature (rw!x) : ORIGIN = 0x840000, LENGTH = 4
 }
@@ -77,13 +77,16 @@ SECTIONS
     KEEP(*(.vectors))
     /* For data that needs to reside in the lower 64k of progmem.  */
     *(.progmem.gcc*)
-    *(.progmem*)
+    /* PR 13812: Placing the trampolines here gives a better chance
+       that they will be in range of the code that uses them.  */
     . = ALIGN(2);
      __trampolines_start = . ;
     /* The jump trampolines for the 16-bit limited relocs will reside here.  */
     *(.trampolines)
     *(.trampolines*)
      __trampolines_end = . ;
+    *(.progmem*)
+    . = ALIGN(2);
     /* For future tablejump instruction arrays for 3 byte pc devices.
        We don't relax jump/call instructions within these sections.  */
     *(.jumptables)
@@ -147,7 +150,7 @@ SECTIONS
     KEEP (*(.fini0))
      _etext = . ;
   }  > text
-  .data	  : AT (ADDR (.text) + SIZEOF (.text))
+  .data          :
   {
      PROVIDE (__data_start = .) ;
     *(.data)
@@ -159,8 +162,8 @@ SECTIONS
     . = ALIGN(2);
      _edata = . ;
      PROVIDE (__data_end = .) ;
-  }  > data
-  .bss   : AT (ADDR (.bss))
+  }  > data AT> text
+  .bss  ADDR(.data) + SIZEOF (.data)   : AT (ADDR (.bss))
   {
      PROVIDE (__bss_start = .) ;
     *(.bss)

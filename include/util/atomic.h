@@ -29,7 +29,7 @@
   POSSIBILITY OF SUCH DAMAGE.
 */
 
-/* $Id: atomic.h 2158 2010-06-10 15:48:28Z joerg_wunsch $ */
+/* $Id$ */
 
 #ifndef _UTIL_ATOMIC_H_
 #define _UTIL_ATOMIC_H_ 1

@@ -28,7 +28,7 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE. */
 
-/* $Id: ctype.h 1504 2007-12-16 07:34:00Z dmix $ */
+/* $Id$ */
 
 /*
    ctype.h - character conversion macros and ctype macros
